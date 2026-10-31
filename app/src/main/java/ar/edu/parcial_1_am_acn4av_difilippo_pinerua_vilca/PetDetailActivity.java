@@ -62,8 +62,12 @@ public class PetDetailActivity extends AppCompatActivity {
         });
         contentScroll.setBackground(cardBg);
 
-        if (pet.getImageUri() != null) {
+        if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
+            new ImageDownloadTask(petImage).execute(pet.getImageUrl());
+
+        } else if (pet.getImageUri() != null) {
             petImage.setImageURI(Uri.parse(pet.getImageUri()));
+
         } else {
             petImage.setImageResource(pet.getImageResId());
         }

@@ -34,7 +34,8 @@ public class PetRepository {
                 PetType.DOG.type,
                 "Muy amigable y juguetón. Le encanta correr y jugar.",
                 false,
-                R.drawable.max
+                null,
+                "https://images.unsplash.com/photo-1552053831-71594a27632d?w=800"
         ));
 
         petList.add(new Pet(
