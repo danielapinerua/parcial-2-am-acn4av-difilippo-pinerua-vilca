@@ -122,8 +122,12 @@ public class AdoptionsActivity extends AppCompatActivity {
             ImageView image = new ImageView(this);
             LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(dpToPx(76), dpToPx(76));
             image.setLayoutParams(imgParams);
-            if (pet.getImageUri() != null) {
+            if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
+                new ImageDownloadTask(image).execute(pet.getImageUrl());
+
+            } else if (pet.getImageUri() != null) {
                 image.setImageURI(Uri.parse(pet.getImageUri()));
+
             } else {
                 image.setImageResource(pet.getImageResId());
             }
