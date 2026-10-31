@@ -1,0 +1,74 @@
+{
+  "pets": [
+    {
+      "id": 1,
+      "name": "Max",
+      "breed": "Golden Retriever",
+      "age": "5 meses",
+      "type": "Perro",
+      "description": "Muy amigable y juguetón. Le encanta correr y jugar.",
+      "adopted": false,
+      "imageUrl": "https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&q=70&auto=format&fit=crop"
+    },
+    {
+      "id": 2,
+      "name": "Daphne",
+      "breed": "Sin raza",
+      "age": "5 años",
+      "type": "Gato",
+      "description": "Tranquila y cariñosa. Le encanta dormir al sol.",
+      "adopted": false,
+      "imageUrl": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=70&auto=format&fit=crop"
+    },
+    {
+      "id": 3,
+      "name": "Rocky",
+      "breed": "Bulldog",
+      "age": "3 años",
+      "type": "Perro",
+      "description": "Es fuerte pero muy cariñoso y se lleva muy bien con los niños.",
+      "adopted": true,
+      "imageUrl": "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=70&auto=format&fit=crop"
+    },
+    {
+      "id": 4,
+      "name": "Paris",
+      "breed": "Angora turco",
+      "age": "4 meses",
+      "type": "Gato",
+      "description": "Muy cariñosa y juguetona. Necesita cuidados frecuentes de su pelaje.",
+      "adopted": false,
+      "imageUrl": "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=800&q=70&auto=format&fit=crop"
+    },
+    {
+      "id": 5,
+      "name": "Charlie",
+      "breed": "Sin raza",
+      "age": "2 meses",
+      "type": "Perro",
+      "description": "Muy activo y juguetón.",
+      "adopted": false,
+      "imageUrl": "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=800&q=70&auto=format&fit=crop"
+    },
+    {
+      "id": 6,
+      "name": "Mora",
+      "breed": "Sin raza",
+      "age": "2 años",
+      "type": "Gato",
+      "description": "Muy tranquila y cariñosa. Le encanta recibir mimos y dormir en lugares calentitos.",
+      "adopted": false,
+      "imageUrl": "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=800&q=70&auto=format&fit=crop"
+    },
+    {
+      "id": 7,
+      "name": "Toby",
+      "breed": "Sin raza",
+      "age": "1 año",
+      "type": "Perro",
+      "description": "Muy juguetón y cariñoso. Le encanta salir a pasear y jugar con otros perros.",
+      "adopted": false,
+      "imageUrl": "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&q=70&auto=format&fit=crop"
+    }
+  ]
+}
