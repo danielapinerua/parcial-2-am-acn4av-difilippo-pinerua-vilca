@@ -123,13 +123,14 @@ public class AdoptionsActivity extends AppCompatActivity {
             LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(dpToPx(76), dpToPx(76));
             image.setLayoutParams(imgParams);
             if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
-                new ImageDownloadTask(image).execute(pet.getImageUrl());
-
+                image.setImageResource(R.drawable.pet_placeholder);
+                new ImageDownloadTask(image, dpToPx(76)).execute(pet.getImageUrl());
             } else if (pet.getImageUri() != null) {
                 image.setImageURI(Uri.parse(pet.getImageUri()));
-
-            } else {
+            } else if (pet.getImageResId() != 0) {
                 image.setImageResource(pet.getImageResId());
+            } else {
+                image.setImageResource(R.drawable.pet_placeholder);
             }
             image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 

@@ -3,17 +3,15 @@ package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
-import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.constants.PetType;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.models.Pet;
 
 public class PetRepository {
     private static PetRepository instance;
     private List<Pet> petList;
+    private boolean loaded;
 
     private PetRepository() {
         petList = new ArrayList<>();
-        initDummyData();
     }
 
     public static PetRepository getInstance() {
@@ -23,86 +21,13 @@ public class PetRepository {
         return instance;
     }
 
-    private void initDummyData() {
-        int defaultImg = R.mipmap.ic_launcher;
+    public void setPets(List<Pet> pets) {
+        this.petList = new ArrayList<>(pets);
+        this.loaded = true;
+    }
 
-        petList.add(new Pet(
-                1,
-                "Max",
-                "Golden Retriever",
-                "5 meses",
-                PetType.DOG.type,
-                "Muy amigable y juguetón. Le encanta correr y jugar.",
-                false,
-                null,
-                "https://images.unsplash.com/photo-1552053831-71594a27632d?w=800"
-        ));
-
-        petList.add(new Pet(
-                2,
-                "Daphne",
-                "Sin raza",
-                "5 años",
-                PetType.CAT.type,
-                "Tranquila y cariñosa. Le encanta dormir al sol.",
-                false,
-                R.drawable.daphne
-        ));
-
-        petList.add(new Pet(
-                3,
-                "Rocky",
-                "Bulldog",
-                "3 años",
-                PetType.DOG.type,
-                "Es fuerte pero muy cariñoso y se lleva muy bien con los niños.",
-                true,
-                R.drawable.rocky
-        ));
-
-        petList.add(new Pet(
-                4,
-                "Paris",
-                "Angora turco",
-                "4 meses",
-                PetType.CAT.type,
-                "Muy cariñosa y juguetona. Necesita cuidados frecuentes de su pelaje.",
-                false,
-                R.drawable.paris
-        ));
-
-        petList.add(new Pet(
-                5,
-                "Charlie",
-                "Sin raza",
-                "2 meses",
-                PetType.DOG.type,
-                "Muy activo y juguetón.",
-                false,
-                R.drawable.charlie
-        ));
-
-        petList.add(new Pet(
-                6,
-                "Mora",
-                "Sin raza",
-                "2 años",
-                PetType.CAT.type,
-                "Muy tranquila y cariñosa. Le encanta recibir mimos y dormir en lugares calentitos.",
-                false,
-                R.drawable.mora
-        ));
-
-        petList.add(new Pet(
-                7,
-                "Toby",
-                "Sin raza",
-                "1 año",
-                PetType.DOG.type,
-                "Muy juguetón y cariñoso. Le encanta salir a pasear y jugar con otros perros.",
-                false,
-                R.drawable.toby
-        ));
+    public boolean isLoaded() {
+        return loaded;
     }
 
     public List<Pet> getAllPets() {

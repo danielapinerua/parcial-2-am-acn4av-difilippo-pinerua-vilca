@@ -7,8 +7,10 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -26,11 +28,20 @@ import java.util.List;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.constants.PetType;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.data.PetRepository;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.models.Pet;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.network.PetsApiClient;
 
 public class PetListActivity extends AppCompatActivity {
 
     private LinearLayout layoutPetContainer;
     private PetRepository petRepository;
+    private PetsApiClient apiClient;
+
+    private ProgressBar progressBar;
+    private View errorContainer;
+    private TextView errorMessage;
+    private TextView emptyView;
+    private View listScroll;
+    private MaterialButton retryButton;
 
     private MaterialButton btnAll, btnDogs, btnCats;
     private static final int COLOR_ACCENT = Color.parseColor("#7C5CFC");
@@ -43,12 +54,27 @@ public class PetListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pet_list);
 
         petRepository = PetRepository.getInstance();
+        apiClient = new PetsApiClient();
+
         layoutPetContainer = findViewById(R.id.layout_pet_container);
+        progressBar = findViewById(R.id.progress_bar);
+        errorContainer = findViewById(R.id.error_container);
+        errorMessage = findViewById(R.id.error_message);
+        emptyView = findViewById(R.id.empty_view);
+        listScroll = findViewById(R.id.list_scroll);
+        retryButton = findViewById(R.id.retry_button);
 
         setupFilters();
         selectFilter(btnAll);
         setupBottomNav();
-        renderPets(petRepository.getAllPets());
+
+        retryButton.setOnClickListener(v -> loadPets());
+
+        if (petRepository.isLoaded()) {
+            renderPets(petRepository.getAllPets());
+        } else {
+            loadPets();
+        }
 
         FloatingActionButton fabAddPet = findViewById(R.id.fab_add_pet);
 
@@ -64,11 +90,9 @@ public class PetListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (btnAll != null) {
-            btnAll.performClick();
-        }
+    protected void onDestroy() {
+        apiClient.cancel();
+        super.onDestroy();
     }
 
     private void setupBottomNav() {
@@ -116,8 +140,67 @@ public class PetListActivity extends AppCompatActivity {
         }
     }
 
+    private void loadPets() {
+        showLoading();
+        apiClient.fetchPets(new PetsApiClient.PetsCallback() {
+            @Override
+            public void onSuccess(List<Pet> pets) {
+                petRepository.setPets(pets);
+                renderPets(pets);
+            }
+
+            @Override
+            public void onError(PetsApiClient.Error error) {
+                showError(error);
+            }
+        });
+    }
+
+    private void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+        errorContainer.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        listScroll.setVisibility(View.GONE);
+    }
+
+    private void showContent() {
+        progressBar.setVisibility(View.GONE);
+        errorContainer.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        listScroll.setVisibility(View.VISIBLE);
+    }
+
+    private void showError(PetsApiClient.Error error) {
+        progressBar.setVisibility(View.GONE);
+        listScroll.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        errorContainer.setVisibility(View.VISIBLE);
+
+        int messageRes;
+        switch (error) {
+            case NETWORK:
+                messageRes = R.string.error_network;
+                break;
+            case SERVER:
+                messageRes = R.string.error_server;
+                break;
+            default:
+                messageRes = R.string.error_data;
+                break;
+        }
+        errorMessage.setText(messageRes);
+    }
+
+    private void showEmpty() {
+        progressBar.setVisibility(View.GONE);
+        errorContainer.setVisibility(View.GONE);
+        listScroll.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+    }
+
     private void renderPets(List<Pet> pets) {
         layoutPetContainer.removeAllViews();
+        int rendered = 0;
 
         for (Pet pet : pets) {
 
@@ -149,14 +232,16 @@ public class PetListActivity extends AppCompatActivity {
             ImageView image = new ImageView(this);
             LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(dpToPx(76), dpToPx(76));
             image.setLayoutParams(imgParams);
+            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
             if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
-                new ImageDownloadTask(image).execute(pet.getImageUrl());
-
+                image.setImageResource(R.drawable.pet_placeholder);
+                new ImageDownloadTask(image, dpToPx(76)).execute(pet.getImageUrl());
             } else if (pet.getImageUri() != null) {
                 image.setImageURI(Uri.parse(pet.getImageUri()));
-
-            } else {
+            } else if (pet.getImageResId() != 0) {
                 image.setImageResource(pet.getImageResId());
+            } else {
+                image.setImageResource(R.drawable.pet_placeholder);
             }
 
             GradientDrawable imgBg = new GradientDrawable();
@@ -219,6 +304,13 @@ public class PetListActivity extends AppCompatActivity {
             });
 
             layoutPetContainer.addView(card);
+            rendered++;
+        }
+
+        if (rendered == 0) {
+            showEmpty();
+        } else {
+            showContent();
         }
     }
 

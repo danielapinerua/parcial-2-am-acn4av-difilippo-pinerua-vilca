@@ -19,4 +19,11 @@
     <string name="nav_adoptions">Adopciones</string>
     <string name="title_adoptions">Mis Adopciones</string>
     <string name="add_pet">Agregar Mascota</string>
+    <string name="loading_pets">Cargando mascotas…</string>
+    <string name="error_network">No hay conexión a internet. Revisá tu red e intentá de nuevo.</string>
+    <string name="error_server">No pudimos cargar las mascotas. Intentá más tarde.</string>
+    <string name="error_data">Recibimos datos inválidos del servidor.</string>
+    <string name="empty_pets">No hay mascotas disponibles.</string>
+    <string name="retry">Reintentar</string>
+    <string name="pet_not_found">No encontramos esa mascota.</string>
 </resources>

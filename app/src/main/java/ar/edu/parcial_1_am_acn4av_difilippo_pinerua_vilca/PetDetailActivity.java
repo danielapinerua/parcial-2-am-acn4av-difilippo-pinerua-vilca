@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.widget.NestedScrollView;
 
@@ -34,6 +35,12 @@ public class PetDetailActivity extends AppCompatActivity {
 
         PetRepository petRepository = PetRepository.getInstance();
         Pet pet = petRepository.getPetById(petId);
+
+        if (pet == null) {
+            Toast.makeText(this, R.string.pet_not_found, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         ImageView petImage = findViewById(R.id.pet_image);
         TextView petName = findViewById(R.id.pet_name);
@@ -63,13 +70,14 @@ public class PetDetailActivity extends AppCompatActivity {
         contentScroll.setBackground(cardBg);
 
         if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
-            new ImageDownloadTask(petImage).execute(pet.getImageUrl());
-
+            petImage.setImageResource(R.drawable.pet_placeholder);
+            new ImageDownloadTask(petImage, dpToPx(320)).execute(pet.getImageUrl());
         } else if (pet.getImageUri() != null) {
             petImage.setImageURI(Uri.parse(pet.getImageUri()));
-
-        } else {
+        } else if (pet.getImageResId() != 0) {
             petImage.setImageResource(pet.getImageResId());
+        } else {
+            petImage.setImageResource(R.drawable.pet_placeholder);
         }
         petName.setText(pet.getName());
         petBreed.setText(pet.getBreed());
