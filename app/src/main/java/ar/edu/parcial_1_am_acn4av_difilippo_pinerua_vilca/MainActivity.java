@@ -15,6 +15,8 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity {
 
     private boolean keepPulsing = true;
@@ -46,7 +48,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 keepPulsing = false;
-                Intent intent = new Intent(MainActivity.this, PetListActivity.class);
+
+                Intent intent;
+
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    intent = new Intent(MainActivity.this, PetListActivity.class);
+                } else {
+                    intent = new Intent(MainActivity.this, LoginActivity.class);
+                }
+
                 startActivity(intent);
                 finish();
             }
