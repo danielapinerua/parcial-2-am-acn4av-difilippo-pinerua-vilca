@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = editPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Completá el correo y la contraseña", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.login_empty_fields), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -47,14 +47,14 @@ public class LoginActivity extends AppCompatActivity {
                     btnLogin.setEnabled(true);
 
                     if (task.isSuccessful()) {
-                        Toast.makeText(this, "¡Bienvenida a Patitas Felices!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(LoginActivity.this, PetListActivity.class);
                         startActivity(intent);
                         finish();
 
                     } else {
-                        Toast.makeText(this, "No se pudo iniciar sesión. Revisá tus datos.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, getString(R.string.login_error), Toast.LENGTH_LONG).show();
                     }
                 });
     }

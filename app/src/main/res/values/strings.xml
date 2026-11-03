@@ -26,4 +26,11 @@
     <string name="empty_pets">No hay mascotas disponibles.</string>
     <string name="retry">Reintentar</string>
     <string name="pet_not_found">No encontramos esa mascota.</string>
+    <string name="login_subtitle">Iniciá sesión para continuar</string>
+    <string name="hint_email">Correo electrónico</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="btn_login">Iniciar sesión</string>
+    <string name="login_empty_fields">Completá el correo y la contraseña</string>
+    <string name="login_success">¡Bienvenida a Patitas Felices!</string>
+    <string name="login_error">No se pudo iniciar sesión. Revisá tus datos.</string>
 </resources>

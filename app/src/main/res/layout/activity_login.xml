@@ -39,7 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Iniciá sesión para continuar"
+            android:text="@string/login_subtitle"
             android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_size_body"
             android:layout_marginTop="@dimen/margin_small"
@@ -49,7 +49,7 @@
             android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Correo electrónico"
+            android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
             android:autofillHints="emailAddress"
             android:padding="@dimen/padding_medium" />
@@ -58,7 +58,7 @@
             android:id="@+id/edit_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Contraseña"
+            android:hint="@string/hint_password"
             android:inputType="textPassword"
             android:autofillHints="password"
             android:padding="@dimen/padding_medium"
@@ -68,7 +68,7 @@
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Iniciar sesión"
+            android:text="@string/btn_login"
             android:layout_marginTop="@dimen/margin_large" />
 
     </LinearLayout>
