@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +17,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editPassword;
     private Button btnLogin;
     private FirebaseAuth mAuth;
+    private TextView tvGoSignup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,13 @@ public class LoginActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.edit_email);
         editPassword = findViewById(R.id.edit_password);
         btnLogin = findViewById(R.id.btn_login);
+
+        tvGoSignup = findViewById(R.id.tv_go_signup);
+
+        tvGoSignup.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+            startActivity(intent);
+        });
 
         btnLogin.setOnClickListener(v -> iniciarSesion());
     }

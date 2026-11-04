@@ -34,4 +34,11 @@
     <string name="login_success">¡Bienvenida a Patitas Felices!</string>
     <string name="login_error">No se pudo iniciar sesión. Revisá tus datos.</string>
     <string name="btn_logout">Cerrar sesión</string>
+    <string name="title_signup">Crear cuenta</string>
+    <string name="signup_subtitle">Registrate para comenzar a adoptar</string>
+    <string name="btn_signup">Registrarme</string>
+    <string name="go_signup">¿No tenés cuenta? Registrate</string>
+    <string name="signup_empty_fields">Completá el correo y la contraseña</string>
+    <string name="signup_success">¡Cuenta creada correctamente!</string>
+    <string name="signup_error">No se pudo crear la cuenta. Revisá los datos.</string>
 </resources>

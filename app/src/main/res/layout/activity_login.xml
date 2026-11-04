@@ -71,6 +71,17 @@
             android:text="@string/btn_login"
             android:layout_marginTop="@dimen/margin_large" />
 
+        <TextView
+            android:id="@+id/tv_go_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/go_signup"
+            android:textColor="@color/accent"
+            android:textSize="14sp"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:clickable="true"
+            android:focusable="true" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
