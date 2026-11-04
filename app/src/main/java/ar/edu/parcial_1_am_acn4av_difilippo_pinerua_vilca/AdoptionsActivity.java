@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.net.Uri;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +32,7 @@ public class AdoptionsActivity extends AppCompatActivity {
 
     private LinearLayout layoutPetContainer;
     private PetRepository petRepository;
+    private FirebaseAuth mAuth;
 
     private static final int COLOR_ACCENT = Color.parseColor("#7C5CFC");
     private static final int COLOR_INACTIVE_BG = Color.parseColor("#F0EEFF");
@@ -42,6 +45,19 @@ public class AdoptionsActivity extends AppCompatActivity {
 
         petRepository = PetRepository.getInstance();
         layoutPetContainer = findViewById(R.id.layout_pet_container);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser usuario = mAuth.getCurrentUser();
+
+        TextView tvUserEmail = findViewById(R.id.tv_user_email);
+
+        if (usuario != null) {
+            tvUserEmail.setText(usuario.getEmail());
+        }
+
+        MaterialButton btnLogout = findViewById(R.id.btn_logout);
+        btnLogout.setOnClickListener(v -> cerrarSesion());
 
         setupBottomNav();
 
@@ -200,5 +216,13 @@ public class AdoptionsActivity extends AppCompatActivity {
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);
+    }
+
+    private void cerrarSesion() {
+        mAuth.signOut();
+
+        Intent intent = new Intent(AdoptionsActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
