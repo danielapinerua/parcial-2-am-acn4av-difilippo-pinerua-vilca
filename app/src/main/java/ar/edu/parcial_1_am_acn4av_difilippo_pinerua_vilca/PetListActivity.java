@@ -22,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.models.Pet;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.network.PetsApiClient;
 
 public class PetListActivity extends AppCompatActivity {
+    private FirebaseAuth mAuth;
 
     private LinearLayout layoutPetContainer;
     private PetRepository petRepository;
@@ -52,6 +54,11 @@ public class PetListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pet_list);
+        mAuth = FirebaseAuth.getInstance();
+
+        MaterialButton btnLogout = findViewById(R.id.btn_logout);
+
+        btnLogout.setOnClickListener(v -> cerrarSesion());
 
         petRepository = PetRepository.getInstance();
         apiClient = new PetsApiClient();
@@ -317,5 +324,13 @@ public class PetListActivity extends AppCompatActivity {
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);
+    }
+
+    private void cerrarSesion() {
+        mAuth.signOut();
+
+        Intent intent = new Intent(PetListActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
