@@ -23,6 +23,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -33,7 +34,6 @@ import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.network.PetsApiClient;
 
 public class PetListActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
-
     private LinearLayout layoutPetContainer;
     private PetRepository petRepository;
     private PetsApiClient apiClient;
@@ -55,6 +55,14 @@ public class PetListActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pet_list);
         mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser usuario = mAuth.getCurrentUser();
+
+        TextView tvUserEmail = findViewById(R.id.tv_user_email);
+
+        if (usuario != null) {
+            tvUserEmail.setText(usuario.getEmail());
+        }
 
         MaterialButton btnLogout = findViewById(R.id.btn_logout);
 
