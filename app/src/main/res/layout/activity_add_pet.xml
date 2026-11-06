@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".AddPetActivity">
+    tools:context=".activities.AddPetActivity">
 
     <Button
         android:id="@+id/btn_back"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
-        android:text="Nueva Mascota"
+        android:text="@string/title_new_pet"
         android:textSize="24sp"
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/text_primary"
@@ -179,7 +179,7 @@
                 android:layout_height="56dp"
                 app:cornerRadius="28dp"
                 android:backgroundTint="@color/accent"
-                android:text="Agregar Mascota"
+                android:text="@string/btn_save_pet"
                 android:textSize="15sp" />
 
         </LinearLayout>

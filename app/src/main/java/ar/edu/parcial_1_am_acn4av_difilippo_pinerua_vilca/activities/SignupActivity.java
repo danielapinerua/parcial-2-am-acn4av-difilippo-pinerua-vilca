@@ -1,4 +1,4 @@
-package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca;
+package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.os.Bundle;
 
@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 
 public class SignupActivity extends AppCompatActivity {
     private EditText editEmail;

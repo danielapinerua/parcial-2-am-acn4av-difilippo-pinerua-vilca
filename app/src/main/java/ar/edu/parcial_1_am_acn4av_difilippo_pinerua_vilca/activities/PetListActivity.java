@@ -1,4 +1,4 @@
-package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca;
+package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,17 +28,22 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks.ImageDownloadTask;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.constants.PetType;
-import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.data.PetRepository;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.models.Pet;
-import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.network.PetsApiClient;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.service.PetService;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.util.PetErrorMessages;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.util.PetImageLoader;
 
 public class PetListActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
-    private LinearLayout layoutPetContainer;
-    private PetRepository petRepository;
-    private PetsApiClient apiClient;
 
+    private static final String FILTER_ALL = "All";
+
+    private FirebaseAuth mAuth;
+    private PetService petService;
+
+    private LinearLayout layoutPetContainer;
     private ProgressBar progressBar;
     private View errorContainer;
     private TextView errorMessage;
@@ -46,6 +52,8 @@ public class PetListActivity extends AppCompatActivity {
     private MaterialButton retryButton;
 
     private MaterialButton btnAll, btnDogs, btnCats;
+    private String selectedType = FILTER_ALL;
+
     private static final int COLOR_ACCENT = Color.parseColor("#7C5CFC");
     private static final int COLOR_INACTIVE_BG = Color.parseColor("#F0EEFF");
 
@@ -57,19 +65,15 @@ public class PetListActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         FirebaseUser usuario = mAuth.getCurrentUser();
-
         TextView tvUserEmail = findViewById(R.id.tv_user_email);
-
         if (usuario != null) {
             tvUserEmail.setText(usuario.getEmail());
         }
 
         MaterialButton btnLogout = findViewById(R.id.btn_logout);
-
         btnLogout.setOnClickListener(v -> cerrarSesion());
 
-        petRepository = PetRepository.getInstance();
-        apiClient = new PetsApiClient();
+        petService = PetService.getInstance();
 
         layoutPetContainer = findViewById(R.id.layout_pet_container);
         progressBar = findViewById(R.id.progress_bar);
@@ -83,19 +87,11 @@ public class PetListActivity extends AppCompatActivity {
         selectFilter(btnAll);
         setupBottomNav();
 
-        retryButton.setOnClickListener(v -> loadPets());
-
-        if (petRepository.isLoaded()) {
-            renderPets(petRepository.getAllPets());
-        } else {
-            loadPets();
-        }
+        retryButton.setOnClickListener(v -> loadPets(true));
 
         FloatingActionButton fabAddPet = findViewById(R.id.fab_add_pet);
-
-        fabAddPet.setOnClickListener(v -> {
-            startActivity(new Intent(PetListActivity.this, AddPetActivity.class));
-        });
+        fabAddPet.setOnClickListener(v ->
+                startActivity(new Intent(PetListActivity.this, AddPetActivity.class)));
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -105,9 +101,9 @@ public class PetListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        apiClient.cancel();
-        super.onDestroy();
+    protected void onResume() {
+        super.onResume();
+        loadPets(!petService.isLoaded());
     }
 
     private void setupBottomNav() {
@@ -133,16 +129,19 @@ public class PetListActivity extends AppCompatActivity {
         btnCats = findViewById(R.id.btn_filter_cats);
 
         btnAll.setOnClickListener(v -> {
+            selectedType = FILTER_ALL;
             selectFilter(btnAll);
-            renderPets(petRepository.getAllPets());
+            renderCurrentFilter();
         });
         btnDogs.setOnClickListener(v -> {
+            selectedType = PetType.DOG.type;
             selectFilter(btnDogs);
-            renderPets(petRepository.getPetsByType(PetType.DOG.type));
+            renderCurrentFilter();
         });
         btnCats.setOnClickListener(v -> {
+            selectedType = PetType.CAT.type;
             selectFilter(btnCats);
-            renderPets(petRepository.getPetsByType(PetType.CAT.type));
+            renderCurrentFilter();
         });
     }
 
@@ -155,20 +154,31 @@ public class PetListActivity extends AppCompatActivity {
         }
     }
 
-    private void loadPets() {
-        showLoading();
-        apiClient.fetchPets(new PetsApiClient.PetsCallback() {
+    private void loadPets(boolean withSpinner) {
+        if (withSpinner) {
+            showLoading();
+        }
+
+        petService.fetchAll(new PetService.Callback<List<Pet>>() {
             @Override
             public void onSuccess(List<Pet> pets) {
-                petRepository.setPets(pets);
-                renderPets(pets);
+                renderCurrentFilter();
             }
 
             @Override
-            public void onError(PetsApiClient.Error error) {
-                showError(error);
+            public void onError(Exception e) {
+                int messageRes = PetErrorMessages.messageRes(e);
+                if (petService.isLoaded()) {
+                    Toast.makeText(PetListActivity.this, messageRes, Toast.LENGTH_SHORT).show();
+                } else {
+                    showError(messageRes);
+                }
             }
         });
+    }
+
+    private void renderCurrentFilter() {
+        renderPets(petService.getPetsByType(selectedType));
     }
 
     private void showLoading() {
@@ -185,24 +195,11 @@ public class PetListActivity extends AppCompatActivity {
         listScroll.setVisibility(View.VISIBLE);
     }
 
-    private void showError(PetsApiClient.Error error) {
+    private void showError(int messageRes) {
         progressBar.setVisibility(View.GONE);
         listScroll.setVisibility(View.GONE);
         emptyView.setVisibility(View.GONE);
         errorContainer.setVisibility(View.VISIBLE);
-
-        int messageRes;
-        switch (error) {
-            case NETWORK:
-                messageRes = R.string.error_network;
-                break;
-            case SERVER:
-                messageRes = R.string.error_server;
-                break;
-            default:
-                messageRes = R.string.error_data;
-                break;
-        }
         errorMessage.setText(messageRes);
     }
 
@@ -248,7 +245,11 @@ public class PetListActivity extends AppCompatActivity {
             LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(dpToPx(76), dpToPx(76));
             image.setLayoutParams(imgParams);
             image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
+
+            if (pet.hasStoredImage()) {
+                PetImageLoader.getInstance().load(
+                        pet.getId(), pet.getImageVersion(), dpToPx(76), image);
+            } else if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
                 image.setImageResource(R.drawable.pet_placeholder);
                 new ImageDownloadTask(image, dpToPx(76)).execute(pet.getImageUrl());
             } else if (pet.getImageUri() != null) {
@@ -260,7 +261,7 @@ public class PetListActivity extends AppCompatActivity {
             }
 
             GradientDrawable imgBg = new GradientDrawable();
-            imgBg.setCornerRadius(dpToPx(38)); // circular
+            imgBg.setCornerRadius(dpToPx(38));
             image.setClipToOutline(true);
             image.setBackground(imgBg);
             content.addView(image);
@@ -336,6 +337,8 @@ public class PetListActivity extends AppCompatActivity {
 
     private void cerrarSesion() {
         mAuth.signOut();
+        petService.clear();
+        PetImageLoader.getInstance().clear();
 
         Intent intent = new Intent(PetListActivity.this, LoginActivity.class);
         startActivity(intent);

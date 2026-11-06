@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Parcial1amacn4avdifilippopineruavilca">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -24,31 +24,36 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PetListActivity"
+            android:name=".activities.PetListActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".PetDetailActivity"
+            android:name=".activities.PetDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ConfirmationActivity"
+            android:name=".activities.ConfirmationActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".AdoptionsActivity"
+            android:name=".activities.AdoptionsActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".AddPetActivity"
+            android:name=".activities.AddPetActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".activities.EditPetActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".SignupActivity"
+            android:name=".activities.SignupActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

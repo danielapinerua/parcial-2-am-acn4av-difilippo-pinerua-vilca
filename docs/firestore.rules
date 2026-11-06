@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Catalogo de mascotas. Sin DELETE por diseno.
+    match /pets/{petId} {
+      allow read: if request.auth != null;
+
+      allow create: if request.auth != null
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.adopted == false
+        && request.resource.data.adoptedBy == null
+        && request.resource.data.imageVersion >= 0;
+
+      allow update: if request.auth != null && (
+        // (a) Adopcion atomica: de libre a adoptada, por el usuario actual.
+        (resource.data.adopted == false
+         && request.resource.data.adopted == true
+         && request.resource.data.adoptedBy == request.auth.uid
+         && request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['adopted', 'adoptedBy', 'adoptedAt']))
+
+        // (b) Edicion de contenido por el creador, nunca sobre una adoptada.
+        ||
+        (resource.data.createdBy == request.auth.uid
+         && resource.data.adopted == false
+         && request.resource.data.adopted == false
+         && request.resource.data.createdBy == resource.data.createdBy
+         && request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['name', 'breed', 'age', 'type', 'description',
+                        'imageUrl', 'imageVersion', 'updatedBy', 'updatedAt']))
+      );
+
+      allow delete: if false;
+    }
+
+    // Imagenes de mascotas en Base64, una por mascota (mismo ID).
+    match /pet_images/{petId} {
+      allow read: if request.auth != null;
+
+      allow create: if request.auth != null
+        && request.resource.data.owner == request.auth.uid
+        && request.resource.data.mimeType == 'image/jpeg'
+        && request.resource.data.data.size() <= 300 * 1024;
+
+      allow update: if request.auth != null
+        && resource.data.owner == request.auth.uid
+        && request.resource.data.owner == resource.data.owner
+        && request.resource.data.mimeType == 'image/jpeg'
+        && request.resource.data.data.size() <= 300 * 1024;
+
+      allow delete: if false;
+    }
+
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}

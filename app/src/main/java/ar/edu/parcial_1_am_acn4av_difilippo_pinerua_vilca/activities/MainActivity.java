@@ -1,7 +1,5 @@
-package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca;
+package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,6 +14,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca;
+package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -17,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editPassword;
     private Button btnLogin;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private TextView tvGoSignup;
 
     @Override
@@ -25,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         editEmail = findViewById(R.id.edit_email);
         editPassword = findViewById(R.id.edit_password);

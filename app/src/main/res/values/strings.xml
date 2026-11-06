@@ -41,4 +41,21 @@
     <string name="signup_empty_fields">Completá el correo y la contraseña</string>
     <string name="signup_success">¡Cuenta creada correctamente!</string>
     <string name="signup_error">No se pudo crear la cuenta. Revisá los datos.</string>
+    <string name="error_permission">No tenés permisos para hacer esa acción. Volvé a iniciar sesión.</string>
+    <string name="btn_edit_pet">Editar</string>
+    <string name="title_new_pet">Nueva Mascota</string>
+    <string name="title_edit_pet">Editar mascota</string>
+    <string name="btn_save_pet">Agregar Mascota</string>
+    <string name="btn_save_changes">Guardar cambios</string>
+    <string name="saving_pet">Guardando…</string>
+    <string name="pet_created">¡Mascota agregada con éxito!</string>
+    <string name="pet_updated">Mascota actualizada</string>
+    <string name="adopt_in_progress">Adoptando…</string>
+    <string name="pet_already_adopted">Otra persona adoptó esta mascota hace un momento.</string>
+    <string name="empty_adoptions">Aún no tenés mascotas adoptadas.</string>
+    <string name="form_incomplete">Por favor, completá todos los campos</string>
+    <string name="image_error">No pudimos procesar la imagen. Probá con otra.</string>
+    <string name="image_too_large">La imagen es demasiado grande. Probá con otra.</string>
+    <string name="error_not_owner">Solo el creador puede editar esta mascota.</string>
+    <string name="error_pet_adopted">No se puede editar una mascota que ya fue adoptada.</string>
 </resources>

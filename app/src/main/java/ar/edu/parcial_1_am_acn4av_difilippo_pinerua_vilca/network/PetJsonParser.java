@@ -29,7 +29,7 @@ public final class PetJsonParser {
 
     private static Pet parsePet(JSONObject json) throws JSONException {
         return new Pet(
-                json.getInt("id"),
+                String.valueOf(json.getInt("id")),
                 json.getString("name"),
                 json.optString("breed", "Sin raza"),
                 json.optString("age", ""),

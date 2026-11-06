@@ -1,4 +1,4 @@
-package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca;
+package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 
 public class ConfirmationActivity extends AppCompatActivity {
 

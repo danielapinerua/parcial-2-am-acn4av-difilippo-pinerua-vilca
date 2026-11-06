@@ -1,17 +1,16 @@
-package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca;
+package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.net.Uri;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,17 +20,23 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.data.PetRepository;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks.ImageDownloadTask;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.models.Pet;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.service.PetService;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.util.PetErrorMessages;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.util.PetImageLoader;
 
 public class AdoptionsActivity extends AppCompatActivity {
 
+    private final PetService petService = PetService.getInstance();
+
     private LinearLayout layoutPetContainer;
-    private PetRepository petRepository;
     private FirebaseAuth mAuth;
 
     private static final int COLOR_ACCENT = Color.parseColor("#7C5CFC");
@@ -43,15 +48,11 @@ public class AdoptionsActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_adoptions);
 
-        petRepository = PetRepository.getInstance();
         layoutPetContainer = findViewById(R.id.layout_pet_container);
-
         mAuth = FirebaseAuth.getInstance();
 
         FirebaseUser usuario = mAuth.getCurrentUser();
-
         TextView tvUserEmail = findViewById(R.id.tv_user_email);
-
         if (usuario != null) {
             tvUserEmail.setText(usuario.getEmail());
         }
@@ -71,7 +72,7 @@ public class AdoptionsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        renderAdoptedPets();
+        loadAdoptions();
     }
 
     private void setupBottomNav() {
@@ -91,20 +92,34 @@ public class AdoptionsActivity extends AppCompatActivity {
         });
     }
 
-    private void renderAdoptedPets() {
-        layoutPetContainer.removeAllViews();
-
-        List<Pet> allPets = petRepository.getAllPets();
-        List<Pet> adoptedPets = new ArrayList<>();
-        for (Pet p : allPets) {
-            if (p.isAdopted()) {
-                adoptedPets.add(p);
-            }
+    private void loadAdoptions() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
         }
+
+        petService.fetchAdoptions(new PetService.Callback<List<Pet>>() {
+            @Override
+            public void onSuccess(List<Pet> pets) {
+                renderAdoptedPets(pets);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(AdoptionsActivity.this,
+                        PetErrorMessages.messageRes(e), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void renderAdoptedPets(List<Pet> adoptedPets) {
+        layoutPetContainer.removeAllViews();
 
         if (adoptedPets.isEmpty()) {
             TextView emptyText = new TextView(this);
-            emptyText.setText("Aún no tienes mascotas adoptadas.");
+            emptyText.setText(R.string.empty_adoptions);
             emptyText.setGravity(Gravity.CENTER);
             emptyText.setPadding(0, dpToPx(32), 0, 0);
             emptyText.setTextSize(16f);
@@ -138,7 +153,10 @@ public class AdoptionsActivity extends AppCompatActivity {
             ImageView image = new ImageView(this);
             LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(dpToPx(76), dpToPx(76));
             image.setLayoutParams(imgParams);
-            if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
+            if (pet.hasStoredImage()) {
+                PetImageLoader.getInstance().load(
+                        pet.getId(), pet.getImageVersion(), dpToPx(76), image);
+            } else if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
                 image.setImageResource(R.drawable.pet_placeholder);
                 new ImageDownloadTask(image, dpToPx(76)).execute(pet.getImageUrl());
             } else if (pet.getImageUri() != null) {
@@ -151,7 +169,7 @@ public class AdoptionsActivity extends AppCompatActivity {
             image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             GradientDrawable imgBg = new GradientDrawable();
-            imgBg.setCornerRadius(dpToPx(38)); // circular
+            imgBg.setCornerRadius(dpToPx(38));
             image.setClipToOutline(true);
             image.setBackground(imgBg);
             content.addView(image);
@@ -220,6 +238,8 @@ public class AdoptionsActivity extends AppCompatActivity {
 
     private void cerrarSesion() {
         mAuth.signOut();
+        PetService.getInstance().clear();
+        PetImageLoader.getInstance().clear();
 
         Intent intent = new Intent(AdoptionsActivity.this, LoginActivity.class);
         startActivity(intent);

@@ -1,4 +1,4 @@
-package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca;
+package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
