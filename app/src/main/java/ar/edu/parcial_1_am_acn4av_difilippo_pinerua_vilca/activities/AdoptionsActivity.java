@@ -241,7 +241,8 @@ public class AdoptionsActivity extends AppCompatActivity {
         PetService.getInstance().clear();
         PetImageLoader.getInstance().clear();
 
-        Intent intent = new Intent(AdoptionsActivity.this, LoginActivity.class);
+        Intent intent = new Intent(AdoptionsActivity.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

@@ -34,6 +34,7 @@ public class SignupActivity extends AppCompatActivity {
         btnSignup = findViewById(R.id.btn_signup);
 
         btnSignup.setOnClickListener(v -> registrarUsuario());
+        findViewById(R.id.btn_back_home).setOnClickListener(v -> volverAlInicio());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -60,6 +61,7 @@ public class SignupActivity extends AppCompatActivity {
                         Toast.makeText(this, getString(R.string.signup_success), Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(SignupActivity.this, PetListActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
 
@@ -67,5 +69,12 @@ public class SignupActivity extends AppCompatActivity {
                         Toast.makeText(this, getString(R.string.signup_error), Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    private void volverAlInicio() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 }

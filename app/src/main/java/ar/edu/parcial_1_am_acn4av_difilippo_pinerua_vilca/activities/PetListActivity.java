@@ -340,7 +340,8 @@ public class PetListActivity extends AppCompatActivity {
         petService.clear();
         PetImageLoader.getInstance().clear();
 
-        Intent intent = new Intent(PetListActivity.this, LoginActivity.class);
+        Intent intent = new Intent(PetListActivity.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

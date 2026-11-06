@@ -42,7 +42,16 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        findViewById(R.id.btn_back_home).setOnClickListener(v -> volverAlInicio());
+
         btnLogin.setOnClickListener(v -> iniciarSesion());
+    }
+
+    private void volverAlInicio() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
     private void iniciarSesion() {
@@ -64,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(LoginActivity.this, PetListActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
 

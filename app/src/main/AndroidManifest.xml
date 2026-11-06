@@ -24,6 +24,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activities.HomeActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".activities.PetListActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
