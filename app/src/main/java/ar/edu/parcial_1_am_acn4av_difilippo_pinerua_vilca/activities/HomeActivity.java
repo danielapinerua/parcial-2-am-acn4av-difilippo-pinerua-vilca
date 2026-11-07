@@ -2,7 +2,6 @@ package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,8 @@ import java.util.List;
 
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.network.PetsApiClient;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks.FetchCatsTask;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks.FetchDogsTask;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks.ImageDownloadTask;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.util.CuratedImages;
 
@@ -39,6 +40,9 @@ public class HomeActivity extends AppCompatActivity {
     private static final int GRID_SIZE = 6;
 
     private final PetsApiClient apiClient = new PetsApiClient();
+
+    private FetchDogsTask dogsTask;
+    private FetchCatsTask catsTask;
 
     private ImageView heroImage;
     private ImageView editorialImage;
@@ -82,7 +86,12 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        apiClient.cancel();
+        if (dogsTask != null) {
+            dogsTask.cancel(true);
+        }
+        if (catsTask != null) {
+            catsTask.cancel(true);
+        }
         super.onDestroy();
     }
 
@@ -111,33 +120,21 @@ public class HomeActivity extends AppCompatActivity {
         dogs = null;
         cats = null;
 
-        apiClient.fetchRandomDogs(IMAGES_PER_SPECIES, new PetsApiClient.ImageUrlsCallback() {
-            @Override
-            public void onSuccess(List<String> urls) {
-                dogs = urls.isEmpty() ? CuratedImages.dogs() : urls;
-                onPartLoaded();
-            }
+        dogsTask = new FetchDogsTask(this, apiClient);
+        dogsTask.execute(IMAGES_PER_SPECIES);
 
-            @Override
-            public void onError(PetsApiClient.Error error) {
-                dogs = CuratedImages.dogs();
-                onPartLoaded();
-            }
-        });
+        catsTask = new FetchCatsTask(this, apiClient);
+        catsTask.execute(IMAGES_PER_SPECIES);
+    }
 
-        apiClient.fetchRandomCats(IMAGES_PER_SPECIES, new PetsApiClient.ImageUrlsCallback() {
-            @Override
-            public void onSuccess(List<String> urls) {
-                cats = urls.isEmpty() ? CuratedImages.cats() : urls;
-                onPartLoaded();
-            }
+    public void onDogsLoaded(List<String> urls) {
+        dogs = urls.isEmpty() ? CuratedImages.dogs() : urls;
+        onPartLoaded();
+    }
 
-            @Override
-            public void onError(PetsApiClient.Error error) {
-                cats = CuratedImages.cats();
-                onPartLoaded();
-            }
-        });
+    public void onCatsLoaded(List<String> urls) {
+        cats = urls.isEmpty() ? CuratedImages.cats() : urls;
+        onPartLoaded();
     }
 
     private void onPartLoaded() {
@@ -251,8 +248,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadImage(ImageView imageView, String url, int targetWidthPx) {
-        new ImageDownloadTask(imageView, targetWidthPx)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
+        new ImageDownloadTask(imageView, targetWidthPx).execute(url);
     }
 
     private void setLoading(boolean loading) {

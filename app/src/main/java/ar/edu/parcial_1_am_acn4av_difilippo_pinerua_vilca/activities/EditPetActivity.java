@@ -2,8 +2,6 @@ package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -19,17 +17,14 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks.CompressImageTask;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks.ImageDownloadTask;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.constants.PetType;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.DTO.PetDTO;
-import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.util.PetImageCodec;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.models.Pet;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.service.PetService;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.util.PetErrorMessages;
@@ -38,8 +33,6 @@ import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.util.PetImageLoader;
 public class EditPetActivity extends PetFormActivity {
 
     private final PetService petService = PetService.getInstance();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private TextInputEditText etName;
     private TextInputEditText etBreed;
@@ -48,6 +41,8 @@ public class EditPetActivity extends PetFormActivity {
     private Spinner spinnerType;
     private Button btnSave;
     private String petId;
+    private CompressImageTask compressTask;
+    private PetDTO pendingDto;
     private boolean saving;
 
     @Override
@@ -163,23 +158,26 @@ public class EditPetActivity extends PetFormActivity {
         String description = getText(etDescription);
         String type = spinnerType.getSelectedItem().toString();
 
-        PetDTO dto = new PetDTO(name, breed, age, type, description);
-        Uri imageUri = selectedImageUri;
+        pendingDto = new PetDTO(name, breed, age, type, description);
 
+        compressTask = new CompressImageTask(this);
+        compressTask.execute(selectedImageUri);
+    }
+
+    @Override
+    public void onCompressionStarted() {
         setSaving(true);
-        executor.execute(() -> {
-            try {
-                byte[] jpeg = imageUri != null
-                        ? PetImageCodec.compressFromUri(this, imageUri)
-                        : null;
-                mainHandler.post(() -> updatePet(dto, jpeg));
-            } catch (IOException e) {
-                mainHandler.post(() -> {
-                    setSaving(false);
-                    Toast.makeText(this, R.string.image_error, Toast.LENGTH_LONG).show();
-                });
-            }
-        });
+    }
+
+    @Override
+    public void onImageReady(byte[] jpeg) {
+        updatePet(pendingDto, jpeg);
+    }
+
+    @Override
+    public void onImageError() {
+        setSaving(false);
+        Toast.makeText(this, R.string.image_error, Toast.LENGTH_LONG).show();
     }
 
     private void updatePet(PetDTO dto, byte[] jpeg) {
@@ -211,7 +209,9 @@ public class EditPetActivity extends PetFormActivity {
 
     @Override
     protected void onDestroy() {
-        executor.shutdown();
+        if (compressTask != null) {
+            compressTask.cancel(true);
+        }
         super.onDestroy();
     }
 }

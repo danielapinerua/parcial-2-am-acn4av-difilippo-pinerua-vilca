@@ -23,6 +23,12 @@ public abstract class PetFormActivity extends AppCompatActivity {
 
     protected Uri selectedImageUri;
 
+    public abstract void onCompressionStarted();
+
+    public abstract void onImageReady(byte[] jpeg);
+
+    public abstract void onImageError();
+
     protected void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("image/*");

@@ -10,6 +10,7 @@ import java.util.List;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.constants.PetType;
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.models.Pet;
 
+//SIN USO
 public final class PetJsonParser {
 
     private static final String KEY_PETS = "pets";

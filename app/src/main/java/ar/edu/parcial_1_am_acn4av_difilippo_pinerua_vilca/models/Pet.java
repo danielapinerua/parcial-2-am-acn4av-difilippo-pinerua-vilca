@@ -14,12 +14,14 @@ public class Pet {
     private String createdBy;
     private long imageVersion;
 
+    //SIN USO
     public Pet(String id, String name, String breed, String age, String type,
                String description, boolean isAdopted, int imageResId) {
         this(id, name, breed, age, type, description, isAdopted, null, null, null, 0L);
         this.imageResId = imageResId;
     }
 
+    //SIN USO
     public Pet(String id, String name, String breed, String age, String type,
                String description, boolean isAdopted, String imageUri) {
         this(id, name, breed, age, type, description, isAdopted, imageUri, null, null, 0L);

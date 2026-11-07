@@ -1,8 +1,6 @@
 package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,10 +14,12 @@ import android.widget.ImageView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks.SplashTask;
 
 public class MainActivity extends AppCompatActivity {
 
     private boolean keepPulsing = true;
+    private SplashTask splashTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,29 +44,37 @@ public class MainActivity extends AppCompatActivity {
         appDescription.setTranslationY(30f);
         appDescription.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(400).start();
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                keepPulsing = false;
-
-                Intent intent;
-
-                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                    intent = new Intent(MainActivity.this, PetListActivity.class);
-                } else {
-                    intent = new Intent(MainActivity.this, HomeActivity.class);
-                }
-
-                startActivity(intent);
-                finish();
-            }
-        }, 2000);
+        splashTask = new SplashTask(this, 2000);
+        splashTask.execute();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    public void onSplashFinished() {
+        keepPulsing = false;
+
+        Intent intent;
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            intent = new Intent(MainActivity.this, PetListActivity.class);
+        } else {
+            intent = new Intent(MainActivity.this, HomeActivity.class);
+        }
+
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (splashTask != null) {
+            splashTask.cancel(true);
+        }
+        super.onDestroy();
     }
 
     private void pulseLogo(ImageView logo) {

@@ -1,36 +1,23 @@
 package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.network;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.models.Pet;
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
+/**
+ * Synchronous HTTP helper. It must be called from doInBackground().
+ */
 public class PetsApiClient {
-
-    public enum Error { NETWORK, SERVER, DATA }
-
-    public interface ImageUrlsCallback {
-        void onSuccess(List<String> urls);
-
-        void onError(Error error);
-    }
-
-    private interface BodyParser {
-        List<String> parse(String body) throws Exception;
-    }
 
     private static final String PETS_URL =
             "https://raw.githubusercontent.com/danielapinerua/"
@@ -39,77 +26,94 @@ public class PetsApiClient {
     private static final String DOGS_URL = "https://dog.ceo/api/breeds/image/random/";
     private static final String CATS_URL = "https://api.thecatapi.com/v1/images/search?limit=";
 
-    private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .build();
+    private static final int CONNECT_TIMEOUT_MS = 10_000;
+    private static final int READ_TIMEOUT_MS = 15_000;
 
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final List<Call> activeCalls = new ArrayList<>();
+    //SIN USO
+    public List<Pet> fetchPets() {
+        String body = read(PETS_URL);
+        if (body == null) {
+            return new ArrayList<>();
+        }
+        try {
+            return PetJsonParser.parse(body);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
 
-    public void fetchRandomDogs(int count, ImageUrlsCallback callback) {
-        Request request = new Request.Builder().url(DOGS_URL + count).build();
-        enqueue(request, callback, body -> {
+    public List<String> fetchRandomDogs(int count) {
+        String body = read(DOGS_URL + count);
+        List<String> urls = new ArrayList<>();
+        if (body == null) {
+            return urls;
+        }
+        try {
             JSONArray array = new JSONObject(body).getJSONArray("message");
-            List<String> urls = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 addUrl(urls, array.optString(i, null));
             }
-            return urls;
-        });
+        } catch (Exception ignored) {
+            // Invalid response: the caller falls back to the curated images.
+        }
+        return urls;
     }
 
-    public void fetchRandomCats(int count, ImageUrlsCallback callback) {
-        Request request = new Request.Builder().url(CATS_URL + count).build();
-        enqueue(request, callback, body -> {
+    public List<String> fetchRandomCats(int count) {
+        String body = read(CATS_URL + count);
+        List<String> urls = new ArrayList<>();
+        if (body == null) {
+            return urls;
+        }
+        try {
             JSONArray array = new JSONArray(body);
-            List<String> urls = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.optJSONObject(i);
                 if (object != null) {
                     addUrl(urls, object.optString("url", null));
                 }
             }
-            return urls;
-        });
-    }
-
-    public void cancel() {
-        for (Call call : activeCalls) {
-            call.cancel();
+        } catch (Exception ignored) {
+            // Invalid response: the caller falls back to the curated images.
         }
-        activeCalls.clear();
+        return urls;
     }
 
-    private void enqueue(Request request, ImageUrlsCallback callback, BodyParser parser) {
-        Call call = CLIENT.newCall(request);
-        activeCalls.add(call);
+    private String read(String url) {
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
+            connection.setReadTimeout(READ_TIMEOUT_MS);
+            connection.setRequestMethod("GET");
+            connection.setDoInput(true);
+            connection.connect();
 
-        call.enqueue(new okhttp3.Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (call.isCanceled()) {
-                    return;
-                }
-                mainHandler.post(() -> callback.onError(Error.NETWORK));
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                return null;
             }
 
-            @Override
-            public void onResponse(Call call, Response response) {
-                ResponseBody body = response.body();
-                if (!response.isSuccessful() || body == null) {
-                    mainHandler.post(() -> callback.onError(Error.SERVER));
-                    return;
-                }
-
-                try (ResponseBody ignored = body) {
-                    List<String> urls = parser.parse(body.string());
-                    mainHandler.post(() -> callback.onSuccess(urls));
-                } catch (Exception e) {
-                    mainHandler.post(() -> callback.onError(Error.DATA));
-                }
+            try (InputStream input = connection.getInputStream()) {
+                return readAll(input);
             }
-        });
+        } catch (IOException e) {
+            return null;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    private static String readAll(InputStream input) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+        }
+        return builder.toString();
     }
 
     private static void addUrl(List<String> urls, String url) {
