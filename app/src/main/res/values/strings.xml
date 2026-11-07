@@ -85,4 +85,5 @@
     <string name="home_grid_title">Conocé a nuestros amigos</string>
     <string name="home_image_desc">Foto de una mascota</string>
     <string name="back_to_home">Volver al inicio</string>
+    <string name="login_image_description">Perro y gato juntos</string>
 </resources>

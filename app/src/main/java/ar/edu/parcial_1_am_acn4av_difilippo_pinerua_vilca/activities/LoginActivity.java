@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import android.widget.ImageView;
+
+import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.tasks.ImageDownloadTask;
 
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 
@@ -27,6 +30,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ImageView loginImage = findViewById(R.id.login_image);
+
+        new ImageDownloadTask(loginImage, 660)
+                .executeOnExecutor(
+                        android.os.AsyncTask.THREAD_POOL_EXECUTOR,
+                        "https://static.wixstatic.com/media/a816dd_de9501d7d0ad4a18bae00c57c2c127ca~mv2.jpeg/v1/fill/w_1920%2Ch_1076%2Cal_c/a816dd_de9501d7d0ad4a18bae00c57c2c127ca~mv2.jpeg"
+                );
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
