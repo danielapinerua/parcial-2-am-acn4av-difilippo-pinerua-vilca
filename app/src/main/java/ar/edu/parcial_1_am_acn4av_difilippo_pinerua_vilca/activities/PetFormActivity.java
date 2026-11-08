@@ -1,7 +1,6 @@
 package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
@@ -14,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.R;
 
@@ -88,15 +88,15 @@ public abstract class PetFormActivity extends AppCompatActivity {
         FrameLayout photoFrame = findViewById(R.id.photo_frame);
         GradientDrawable photoBg = new GradientDrawable();
         photoBg.setShape(GradientDrawable.OVAL);
-        photoBg.setColor(Color.parseColor("#F0EEFF"));
+        photoBg.setColor(ContextCompat.getColor(this, R.color.surface_variant));
         photoFrame.setBackground(photoBg);
     }
 
     protected void styleSpinner(Spinner spinner) {
         GradientDrawable spinnerBg = new GradientDrawable();
-        spinnerBg.setColor(Color.WHITE);
+        spinnerBg.setColor(ContextCompat.getColor(this, R.color.white));
         spinnerBg.setCornerRadius(dpToPx(14));
-        spinnerBg.setStroke(dpToPx(1), Color.parseColor("#DDDDDD"));
+        spinnerBg.setStroke(dpToPx(1), ContextCompat.getColor(this, R.color.outline_strong));
         spinner.setBackground(spinnerBg);
     }
 

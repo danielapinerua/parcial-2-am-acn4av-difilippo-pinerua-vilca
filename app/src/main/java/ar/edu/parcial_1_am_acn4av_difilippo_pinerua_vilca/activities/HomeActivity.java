@@ -1,7 +1,6 @@
 package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.ProgressBar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -228,7 +228,7 @@ public class HomeActivity extends AppCompatActivity {
             card.setLayoutParams(params);
             card.setRadius(dpToPx(14));
             card.setCardElevation(0);
-            card.setCardBackgroundColor(Color.parseColor("#F0EEFF"));
+            card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.surface_variant));
             card.setClickable(true);
             card.setFocusable(true);
 

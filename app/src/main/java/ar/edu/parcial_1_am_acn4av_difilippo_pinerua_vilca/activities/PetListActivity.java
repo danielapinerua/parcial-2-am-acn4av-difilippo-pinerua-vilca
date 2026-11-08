@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -54,8 +55,8 @@ public class PetListActivity extends AppCompatActivity {
     private MaterialButton btnAll, btnDogs, btnCats;
     private String selectedType = FILTER_ALL;
 
-    private static final int COLOR_ACCENT = Color.parseColor("#7C5CFC");
-    private static final int COLOR_INACTIVE_BG = Color.parseColor("#F0EEFF");
+    private int colorAccent;
+    private int colorInactiveBg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,9 @@ public class PetListActivity extends AppCompatActivity {
         emptyView = findViewById(R.id.empty_view);
         listScroll = findViewById(R.id.list_scroll);
         retryButton = findViewById(R.id.retry_button);
+
+        colorAccent = ContextCompat.getColor(this, R.color.accent);
+        colorInactiveBg = ContextCompat.getColor(this, R.color.surface_variant);
 
         setupFilters();
         selectFilter(btnAll);
@@ -110,11 +114,11 @@ public class PetListActivity extends AppCompatActivity {
         MaterialButton navPets = findViewById(R.id.nav_btn_pets);
         MaterialButton navAdoptions = findViewById(R.id.nav_btn_adoptions);
 
-        navPets.setBackgroundTintList(android.content.res.ColorStateList.valueOf(COLOR_ACCENT));
-        navPets.setTextColor(Color.WHITE);
+        navPets.setBackgroundTintList(android.content.res.ColorStateList.valueOf(colorAccent));
+        navPets.setTextColor(ContextCompat.getColor(this, R.color.white));
 
         navAdoptions.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.TRANSPARENT));
-        navAdoptions.setTextColor(Color.DKGRAY);
+        navAdoptions.setTextColor(ContextCompat.getColor(this, R.color.nav_inactive));
 
         navAdoptions.setOnClickListener(v -> {
             Intent intent = new Intent(PetListActivity.this, AdoptionsActivity.class);
@@ -149,8 +153,10 @@ public class PetListActivity extends AppCompatActivity {
         for (MaterialButton btn : new MaterialButton[]{btnAll, btnDogs, btnCats}) {
             boolean isSelected = btn == selected;
             btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                    isSelected ? COLOR_ACCENT : COLOR_INACTIVE_BG));
-            btn.setTextColor(isSelected ? Color.WHITE : COLOR_ACCENT);
+                    isSelected ? colorAccent : colorInactiveBg));
+            btn.setTextColor(isSelected
+                    ? ContextCompat.getColor(this, R.color.white)
+                    : colorAccent);
         }
     }
 
@@ -230,9 +236,9 @@ public class PetListActivity extends AppCompatActivity {
             card.setRadius(dpToPx(18));
             card.setCardElevation(dpToPx(1));
             card.setStrokeWidth(dpToPx(1));
-            card.setStrokeColor(Color.parseColor("#EFEFEF"));
-            card.setCardBackgroundColor(Color.WHITE);
-            card.setRippleColor(android.content.res.ColorStateList.valueOf(COLOR_INACTIVE_BG));
+            card.setStrokeColor(ContextCompat.getColor(this, R.color.outline));
+            card.setCardBackgroundColor(ContextCompat.getColor(this, R.color.surface));
+            card.setRippleColor(android.content.res.ColorStateList.valueOf(colorInactiveBg));
             card.setClickable(true);
             card.setFocusable(true);
 
@@ -279,13 +285,13 @@ public class PetListActivity extends AppCompatActivity {
             nameText.setText(pet.getName());
             nameText.setTextSize(17f);
             nameText.setTypeface(null, Typeface.BOLD);
-            nameText.setTextColor(Color.parseColor("#1A1A1A"));
+            nameText.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
             textContainer.addView(nameText);
 
             TextView breedText = new TextView(this);
             breedText.setText(pet.getBreed());
             breedText.setTextSize(13f);
-            breedText.setTextColor(Color.parseColor("#9A9A9A"));
+            breedText.setTextColor(ContextCompat.getColor(this, R.color.text_hint));
             LinearLayout.LayoutParams breedParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             breedParams.topMargin = dpToPx(2);
@@ -296,12 +302,14 @@ public class PetListActivity extends AppCompatActivity {
             statusText.setText(pet.isAdopted() ? getString(R.string.status_adopted) : getString(R.string.status_available));
             statusText.setTextSize(11f);
             statusText.setTypeface(null, Typeface.BOLD);
-            statusText.setTextColor(pet.isAdopted() ? Color.parseColor("#B0B0B0") : Color.parseColor("#388E3C"));
+            statusText.setTextColor(ContextCompat.getColor(this,
+                    pet.isAdopted() ? R.color.text_disabled : R.color.success));
             statusText.setPadding(dpToPx(10), dpToPx(4), dpToPx(10), dpToPx(4));
 
             GradientDrawable statusBg = new GradientDrawable();
             statusBg.setCornerRadius(dpToPx(20));
-            statusBg.setColor(pet.isAdopted() ? Color.parseColor("#F2F2F2") : Color.parseColor("#E7F5EA"));
+            statusBg.setColor(ContextCompat.getColor(this,
+                    pet.isAdopted() ? R.color.surface_disabled : R.color.success_container));
             statusText.setBackground(statusBg);
 
             LinearLayout.LayoutParams statusParams = new LinearLayout.LayoutParams(

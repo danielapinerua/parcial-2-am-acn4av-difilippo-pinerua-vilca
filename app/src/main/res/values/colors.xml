@@ -1,9 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Marca -->
+    <color name="accent">#7C5CFC</color>
+
+    <!-- Superficies -->
     <color name="background">#FDFCFB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F0EEFF</color>
+    <color name="surface_disabled">#F2F2F2</color>
+
+    <!-- Texto -->
     <color name="text_primary">#1A1A1A</color>
     <color name="text_secondary">#8A8A8A</color>
-    <color name="accent">#7C5CFC</color>
+    <color name="text_hint">#9A9A9A</color>
+    <color name="text_disabled">#B0B0B0</color>
+
+    <!-- Bordes -->
+    <color name="outline">#EFEFEF</color>
+    <color name="outline_strong">#DDDDDD</color>
+
+    <!-- Estados -->
+    <color name="success">#388E3C</color>
+    <color name="success_container">#E7F5EA</color>
+
+    <!-- Overlays -->
+    <color name="overlay_white_35">#59FFFFFF</color>
+    <color name="overlay_white_80">#CCFFFFFF</color>
+    <color name="scrim_start">#00000000</color>
+    <color name="scrim_center">#66000000</color>
+    <color name="scrim_end">#D9000000</color>
+
+    <!-- Navegacion -->
+    <color name="nav_inactive">#444444</color>
 </resources>

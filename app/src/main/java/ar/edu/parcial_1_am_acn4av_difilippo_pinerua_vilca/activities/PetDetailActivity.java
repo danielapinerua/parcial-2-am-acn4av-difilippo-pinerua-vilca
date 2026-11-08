@@ -1,7 +1,6 @@
 package ar.edu.parcial_1_am_acn4av_difilippo_pinerua_vilca.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -73,11 +73,11 @@ public class PetDetailActivity extends AppCompatActivity {
 
         GradientDrawable circleBg = new GradientDrawable();
         circleBg.setShape(GradientDrawable.OVAL);
-        circleBg.setColor(Color.WHITE);
+        circleBg.setColor(ContextCompat.getColor(this, R.color.white));
         btnBack.setBackground(circleBg);
 
         GradientDrawable cardBg = new GradientDrawable();
-        cardBg.setColor(Color.parseColor("#FDFCFB"));
+        cardBg.setColor(ContextCompat.getColor(this, R.color.background));
         cardBg.setCornerRadii(new float[]{
                 dpToPx(28), dpToPx(28),
                 dpToPx(28), dpToPx(28),
@@ -146,15 +146,15 @@ public class PetDetailActivity extends AppCompatActivity {
 
         if (pet.isAdopted()) {
             petStatus.setText(R.string.status_adopted);
-            petStatus.setTextColor(Color.parseColor("#B0B0B0"));
-            statusBg.setColor(Color.parseColor("#F2F2F2"));
+            petStatus.setTextColor(ContextCompat.getColor(this, R.color.text_disabled));
+            statusBg.setColor(ContextCompat.getColor(this, R.color.surface_disabled));
             btnAdopt.setEnabled(false);
             btnAdopt.setAlpha(0.5f);
             btnAdopt.setText(R.string.btn_adopt);
         } else {
             petStatus.setText(R.string.status_available);
-            petStatus.setTextColor(Color.parseColor("#388E3C"));
-            statusBg.setColor(Color.parseColor("#E7F5EA"));
+            petStatus.setTextColor(ContextCompat.getColor(this, R.color.success));
+            statusBg.setColor(ContextCompat.getColor(this, R.color.success_container));
             btnAdopt.setEnabled(true);
             btnAdopt.setAlpha(1f);
             btnAdopt.setText(R.string.btn_adopt);
